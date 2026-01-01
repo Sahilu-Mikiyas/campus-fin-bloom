@@ -98,20 +98,18 @@ export function AppSidebar() {
                   {!collapsed && <span>Dashboard</span>}
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              {isAdmin && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    onClick={() => navigate('/dashboard/users')}
-                    className={cn(
-                      'w-full justify-start gap-3 transition-all duration-200',
-                      isActive('/dashboard/users') && 'bg-sidebar-primary text-sidebar-primary-foreground'
-                    )}
-                  >
-                    <UserCog className="h-4 w-4" />
-                    {!collapsed && <span>User Management</span>}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => navigate('/dashboard/users')}
+                  className={cn(
+                    'w-full justify-start gap-3 transition-all duration-200',
+                    isActive('/dashboard/users') && 'bg-sidebar-primary text-sidebar-primary-foreground'
+                  )}
+                >
+                  <UserCog className="h-4 w-4" />
+                  {!collapsed && <span>Users</span>}
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

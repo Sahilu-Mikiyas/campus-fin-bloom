@@ -43,7 +43,7 @@ interface UserWithRole {
 }
 
 export default function UserManagement() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, session } = useAuth();
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -69,52 +69,37 @@ export default function UserManagement() {
     role: 'viewer' as 'admin' | 'officer' | 'viewer',
   });
 
+  const callAdminApi = async (action: string, payload: Record<string, unknown> = {}) => {
+    const { data, error } = await supabase.functions.invoke('admin-users', {
+      body: { action, ...payload },
+    });
+
+    if (error) throw error;
+    if (data?.error) throw new Error(data.error);
+    return data;
+  };
+
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      
-      // Fetch profiles
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('*');
-      
-      if (profilesError) throw profilesError;
-
-      // Fetch roles
-      const { data: roles, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('*');
-      
-      if (rolesError) throw rolesError;
-
-      // Combine data
-      const combinedUsers: UserWithRole[] = (profiles || []).map(profile => {
-        const userRole = roles?.find(r => r.user_id === profile.user_id);
-        return {
-          id: profile.user_id,
-          email: '', // We'll need to get this differently since auth.users is protected
-          first_name: profile.first_name,
-          last_name: profile.last_name,
-          employee_id: profile.employee_id,
-          role: (userRole?.role || 'viewer') as 'admin' | 'officer' | 'viewer',
-          created_at: profile.created_at,
-        };
-      });
-
-      setUsers(combinedUsers);
-    } catch (error) {
+      const data = await callAdminApi('list_users');
+      setUsers(data.users || []);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to load users';
       console.error('Error fetching users:', error);
-      toast.error('Failed to load users');
+      toast.error(message);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (isAdmin) {
+    if (isAdmin && session) {
       fetchUsers();
+    } else {
+      setLoading(false);
     }
-  }, [isAdmin]);
+  }, [isAdmin, session]);
 
   const handleCreateUser = async () => {
     if (!createForm.email || !createForm.password) {
@@ -124,43 +109,14 @@ export default function UserManagement() {
 
     setIsSubmitting(true);
     try {
-      // Create auth user (admin.auth.createUser is not available via client SDK)
-      // We'll use signUp which works for creating users
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      await callAdminApi('create_user', {
         email: createForm.email,
         password: createForm.password,
-        options: {
-          data: {
-            first_name: createForm.first_name,
-            last_name: createForm.last_name,
-          },
-        },
+        first_name: createForm.first_name,
+        last_name: createForm.last_name,
+        employee_id: createForm.employee_id,
+        role: createForm.role,
       });
-
-      if (authError) throw authError;
-      if (!authData.user) throw new Error('User creation failed');
-
-      // Update profile with additional info
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({
-          first_name: createForm.first_name,
-          last_name: createForm.last_name,
-          employee_id: createForm.employee_id,
-        })
-        .eq('user_id', authData.user.id);
-
-      if (profileError) console.error('Profile update error:', profileError);
-
-      // Assign role
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: authData.user.id,
-          role: createForm.role,
-        });
-
-      if (roleError) throw roleError;
 
       toast.success('User created successfully');
       setShowCreateModal(false);
@@ -173,9 +129,10 @@ export default function UserManagement() {
         role: 'viewer',
       });
       fetchUsers();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to create user';
       console.error('Error creating user:', error);
-      toast.error(error.message || 'Failed to create user');
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -186,35 +143,22 @@ export default function UserManagement() {
 
     setIsSubmitting(true);
     try {
-      // Update profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({
-          first_name: editForm.first_name,
-          last_name: editForm.last_name,
-          employee_id: editForm.employee_id,
-        })
-        .eq('user_id', selectedUser.id);
-
-      if (profileError) throw profileError;
-
-      // Update role (upsert)
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .upsert({
-          user_id: selectedUser.id,
-          role: editForm.role,
-        }, { onConflict: 'user_id' });
-
-      if (roleError) throw roleError;
+      await callAdminApi('update_user', {
+        user_id: selectedUser.id,
+        first_name: editForm.first_name,
+        last_name: editForm.last_name,
+        employee_id: editForm.employee_id,
+        role: editForm.role,
+      });
 
       toast.success('User updated successfully');
       setShowEditModal(false);
       setSelectedUser(null);
       fetchUsers();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to update user';
       console.error('Error updating user:', error);
-      toast.error(error.message || 'Failed to update user');
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -225,29 +169,16 @@ export default function UserManagement() {
 
     setIsSubmitting(true);
     try {
-      // Delete role first
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .delete()
-        .eq('user_id', selectedUser.id);
+      await callAdminApi('delete_user', { user_id: selectedUser.id });
 
-      if (roleError) throw roleError;
-
-      // Delete profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('user_id', selectedUser.id);
-
-      if (profileError) throw profileError;
-
-      toast.success('User removed successfully');
+      toast.success('User deleted successfully');
       setShowDeleteModal(false);
       setSelectedUser(null);
       fetchUsers();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to delete user';
       console.error('Error deleting user:', error);
-      toast.error(error.message || 'Failed to delete user');
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -278,6 +209,7 @@ export default function UserManagement() {
   const filteredUsers = users.filter(user =>
     (user.first_name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
     (user.last_name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (user.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
     (user.employee_id?.toLowerCase() || '').includes(searchTerm.toLowerCase())
   );
 
@@ -332,6 +264,7 @@ export default function UserManagement() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
                   <TableHead>Employee ID</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead>Created</TableHead>
@@ -341,7 +274,7 @@ export default function UserManagement() {
               <TableBody>
                 {filteredUsers.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                    <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
                       No users found
                     </TableCell>
                   </TableRow>
@@ -356,6 +289,9 @@ export default function UserManagement() {
                         {user.first_name || user.last_name
                           ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
                           : 'Unnamed User'}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {user.email || 'N/A'}
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline">{user.employee_id || 'N/A'}</Badge>
@@ -561,7 +497,7 @@ export default function UserManagement() {
                 {selectedUser.first_name} {selectedUser.last_name}
               </p>
               <p className="text-sm text-muted-foreground">
-                {selectedUser.employee_id || 'No Employee ID'}
+                {selectedUser.email || selectedUser.employee_id || 'No identifiers'}
               </p>
             </div>
           )}
