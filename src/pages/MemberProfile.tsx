@@ -184,6 +184,9 @@ export default function MemberProfile() {
   // Loan handlers
   const handleAddLoan = () => {
     if (!memberId) return;
+    const totalPayable = loanForm.amount * (1 + loanForm.interestRate / 100);
+    const disbursedAt = new Date().toISOString().split('T')[0];
+    const dueDate = new Date(Date.now() + loanForm.tenure * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     addLoan({
       id: `loan-${Date.now()}`,
       memberId,
@@ -192,6 +195,9 @@ export default function MemberProfile() {
       interestRate: loanForm.interestRate,
       tenure: loanForm.tenure,
       status: 'active',
+      disbursedAt,
+      dueDate,
+      totalPayable,
       amountPaid: 0,
     });
     setShowAddLoanModal(false);
@@ -617,15 +623,15 @@ export default function MemberProfile() {
               <div className="space-y-2">
                 <Label>Month</Label>
                 <Select
-                  value={savingForm.month}
-                  onValueChange={(value) => setSavingForm({ ...savingForm, month: value })}
+                  value={String(savingForm.month)}
+                  onValueChange={(value) => setSavingForm({ ...savingForm, month: Number(value) })}
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {months.map(m => (
-                      <SelectItem key={m} value={m}>{m}</SelectItem>
+                    {months.map((m, idx) => (
+                      <SelectItem key={m} value={String(idx + 1)}>{m}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -690,8 +696,8 @@ export default function MemberProfile() {
                 <Label>Term (months)</Label>
                 <Input
                   type="number"
-                  value={loanForm.term}
-                  onChange={(e) => setLoanForm({ ...loanForm, term: Number(e.target.value) })}
+                  value={loanForm.tenure}
+                  onChange={(e) => setLoanForm({ ...loanForm, tenure: Number(e.target.value) })}
                 />
               </div>
             </div>
