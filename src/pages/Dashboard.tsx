@@ -22,14 +22,16 @@ export default function Dashboard() {
           icon={Users}
           variant="primary"
           description="Registered members"
+          href="/dashboard/members"
         />
         <StatsCard
           title="Total Savings"
           value={stats.totalSavings}
           icon={PiggyBank}
           variant="secondary"
-          prefix="$"
+          prefix="ETB "
           description="Combined balance"
+          href="/dashboard/savings"
         />
         <StatsCard
           title="Active Loans"
@@ -37,6 +39,7 @@ export default function Dashboard() {
           icon={CreditCard}
           variant="primary"
           description="Currently active"
+          href="/dashboard/loans"
         />
         <StatsCard
           title="Overdue Loans"
@@ -44,6 +47,7 @@ export default function Dashboard() {
           icon={AlertTriangle}
           variant="accent"
           description="Requires attention"
+          href="/dashboard/overdue"
         />
       </div>
 

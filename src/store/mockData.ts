@@ -239,15 +239,15 @@ const generateSavings = (members: Member[]): Saving[] => {
   return savings;
 };
 
-// Generate loans dynamically based on members
+// Generate loans dynamically based on members - ALL members get loans
 const generateLoans = (members: Member[]): Loan[] => {
   const loans: Loan[] = [];
   let loanId = 1;
   
-  // Only 30% of members have loans
-  const membersWithLoans = members.filter(() => Math.random() < 0.3);
+  // All active members have at least one loan
+  const activeMembers = members.filter(m => m.status === 'active');
   
-  membersWithLoans.forEach(member => {
+  activeMembers.forEach(member => {
     const amount = (10000 + Math.floor(Math.random() * 190000)); // 10,000 - 200,000 ETB
     const interestRate = 8 + Math.floor(Math.random() * 7); // 8-14%
     const tenure = [6, 12, 18, 24, 36][Math.floor(Math.random() * 5)];
@@ -261,7 +261,7 @@ const generateLoans = (members: Member[]): Loan[] => {
     dueDate.setMonth(dueDate.getMonth() + tenure);
     
     const totalPayable = Math.round(amount * (1 + interestRate / 100));
-    const amountPaid = status === 'completed' ? totalPayable : Math.round(totalPayable * Math.random() * 0.7);
+    const amountPaid = status === 'completed' ? totalPayable : Math.round(totalPayable * (0.2 + Math.random() * 0.6));
     
     loans.push({
       id: `loan-${loanId}`,

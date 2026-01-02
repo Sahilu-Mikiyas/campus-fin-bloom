@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { LucideIcon } from 'lucide-react';
@@ -11,6 +12,7 @@ interface StatsCardProps {
   prefix?: string;
   suffix?: string;
   description?: string;
+  href?: string;
 }
 
 export function StatsCard({
@@ -21,7 +23,9 @@ export function StatsCard({
   prefix = '',
   suffix = '',
   description,
+  href,
 }: StatsCardProps) {
+  const navigate = useNavigate();
   const [displayValue, setDisplayValue] = useState(0);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -58,12 +62,20 @@ export function StatsCard({
     destructive: 'bg-destructive text-destructive-foreground',
   };
 
+  const handleClick = () => {
+    if (href) {
+      navigate(href);
+    }
+  };
+
   return (
     <Card
       ref={cardRef}
+      onClick={handleClick}
       className={cn(
         'hover-lift cursor-pointer transition-all duration-300 border-2',
-        variantStyles[variant]
+        variantStyles[variant],
+        href && 'hover:scale-[1.02] active:scale-[0.98]'
       )}
     >
       <CardContent className="p-6">

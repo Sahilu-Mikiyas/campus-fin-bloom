@@ -43,6 +43,7 @@ import {
   ArrowUpDown,
   Edit,
   Eye,
+  Trash2,
   MoreHorizontal,
   Download,
   ChevronLeft,
@@ -51,12 +52,22 @@ import {
   CreditCard,
 } from 'lucide-react';
 import { PasswordModal } from '@/components/modals/PasswordModal';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 
 export default function MembersDirectory() {
   const navigate = useNavigate();
   const { canEdit } = useAuth();
-  const { members, colleges, institutions, savings, loans, updateMember } = useStore();
+  const { members, colleges, institutions, savings, loans, updateMember, deleteMember } = useStore();
   
   // Search and filter state
   const [searchQuery, setSearchQuery] = useState('');
@@ -83,6 +94,10 @@ export default function MembersDirectory() {
   // Password modal
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [pendingAction, setPendingAction] = useState<() => void>(() => {});
+  
+  // Delete confirmation
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deletingMember, setDeletingMember] = useState<typeof members[0] | null>(null);
   
   // Get departments filtered by selected college
   const filteredDepartments = useMemo(() => {
@@ -216,6 +231,20 @@ export default function MembersDirectory() {
     setShowEditModal(false);
     setEditingMember(null);
     toast.success('Member updated successfully');
+  };
+  
+  // Delete member
+  const handleDeleteClick = (member: typeof members[0]) => {
+    setDeletingMember(member);
+    requirePassword(() => setShowDeleteDialog(true));
+  };
+  
+  const handleConfirmDelete = () => {
+    if (!deletingMember) return;
+    deleteMember(deletingMember.id);
+    setShowDeleteDialog(false);
+    setDeletingMember(null);
+    toast.success('Member deleted successfully');
   };
   
   // Export to CSV
@@ -463,10 +492,19 @@ export default function MembersDirectory() {
                             View Profile
                           </DropdownMenuItem>
                           {canEdit && (
-                            <DropdownMenuItem onClick={() => handleEditClick(member)}>
-                              <Edit className="w-4 h-4 mr-2" />
-                              Edit Member
-                            </DropdownMenuItem>
+                            <>
+                              <DropdownMenuItem onClick={() => handleEditClick(member)}>
+                                <Edit className="w-4 h-4 mr-2" />
+                                Edit Member
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={() => handleDeleteClick(member)}
+                                className="text-destructive focus:text-destructive"
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Delete Member
+                              </DropdownMenuItem>
+                            </>
                           )}
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -564,6 +602,25 @@ export default function MembersDirectory() {
         onClose={() => setShowPasswordModal(false)}
         onConfirm={handlePasswordConfirm}
       />
+      
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Member</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete <strong>{deletingMember?.name}</strong>? 
+              This action cannot be undone and will remove all associated savings, loans, and repayment records.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeletingMember(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
