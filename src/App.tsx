@@ -12,6 +12,9 @@ import CollegePage from "./pages/CollegePage";
 import InstitutionPage from "./pages/InstitutionPage";
 import MemberProfile from "./pages/MemberProfile";
 import MembersDirectory from "./pages/MembersDirectory";
+import SavingsOverview from "./pages/SavingsOverview";
+import LoansOverview from "./pages/LoansOverview";
+import OverdueLoans from "./pages/OverdueLoans";
 import UserManagement from "./pages/UserManagement";
 import NotFound from "./pages/NotFound";
 
@@ -33,6 +36,9 @@ const App = () => (
               <Route path="institutions/:institutionId" element={<InstitutionPage />} />
               <Route path="members" element={<MembersDirectory />} />
               <Route path="members/:memberId" element={<MemberProfile />} />
+              <Route path="savings" element={<SavingsOverview />} />
+              <Route path="loans" element={<LoansOverview />} />
+              <Route path="overdue" element={<OverdueLoans />} />
               <Route path="users" element={<UserManagement />} />
             </Route>
             <Route path="*" element={<NotFound />} />
