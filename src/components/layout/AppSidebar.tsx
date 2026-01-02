@@ -100,6 +100,18 @@ export function AppSidebar() {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton
+                  onClick={() => navigate('/dashboard/members')}
+                  className={cn(
+                    'w-full justify-start gap-3 transition-all duration-200',
+                    isActive('/dashboard/members') && 'bg-sidebar-primary text-sidebar-primary-foreground'
+                  )}
+                >
+                  <Users className="h-4 w-4" />
+                  {!collapsed && <span>Members</span>}
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
                   onClick={() => navigate('/dashboard/users')}
                   className={cn(
                     'w-full justify-start gap-3 transition-all duration-200',

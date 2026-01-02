@@ -1,4 +1,4 @@
-// Mock data for Campus Savings and Loan Management System
+// Mock data for Arbaminch University Savings and Loan Management System
 
 export interface College {
   id: string;
@@ -85,69 +85,262 @@ export interface RecentActivity {
   timestamp: string;
 }
 
-// Initial mock data
+// Ethiopian first names
+const firstNames = [
+  'Abebe', 'Almaz', 'Bekele', 'Biruk', 'Chaltu', 'Daniel', 'Dawit', 'Eleni', 'Ermias', 'Eyerusalem',
+  'Fasil', 'Fikirte', 'Getachew', 'Girma', 'Hana', 'Hailu', 'Haben', 'Kidist', 'Kebede', 'Kiros',
+  'Lemlem', 'Mekdes', 'Meseret', 'Mulugeta', 'Nardos', 'Negash', 'Rahel', 'Samuel', 'Sara', 'Selamawit',
+  'Solomon', 'Tadesse', 'Tekle', 'Tesfaye', 'Tigist', 'Tsehay', 'Wondwosen', 'Yared', 'Yeshi', 'Yohannes',
+  'Zerihun', 'Zewditu', 'Abnet', 'Alem', 'Aster', 'Berhanu', 'Desta', 'Ephrem', 'Fitsum', 'Genet',
+  'Helen', 'Isaac', 'Jerusalem', 'Kassahun', 'Liya', 'Meron', 'Naod', 'Petros', 'Ruth', 'Selam',
+  'Tewodros', 'Yonas', 'Zena', 'Abel', 'Amanuel', 'Bethlehem', 'Eden', 'Ezra', 'Haddis', 'Konjit',
+  'Martha', 'Mihret', 'Nebiyu', 'Robel', 'Senait', 'Sisay', 'Tamrat', 'Wendim', 'Yemisrach', 'Zelalem'
+];
+
+// Ethiopian last names
+const lastNames = [
+  'Abera', 'Adefris', 'Alemu', 'Asefa', 'Ayele', 'Bekele', 'Belay', 'Desta', 'Eshetu', 'Gebre',
+  'Gebrehiwot', 'Gebremariam', 'Getahun', 'Girma', 'Haile', 'Hailu', 'Kebede', 'Kifle', 'Mekonnen', 'Mengistu',
+  'Mulatu', 'Negash', 'Seyoum', 'Tadesse', 'Tefera', 'Tekle', 'Tessema', 'Woldemariam', 'Worku', 'Yilma',
+  'Zerihun', 'Zewde', 'Admasu', 'Alemayehu', 'Assefa', 'Berhe', 'Debebe', 'Demissie', 'Endale', 'Fantahun',
+  'Girmay', 'Hagos', 'Kassa', 'Legesse', 'Melaku', 'Nigussie', 'Regassa', 'Shiferaw', 'Tamiru', 'Wolde'
+];
+
+// Initial mock data - Colleges at Arbaminch University
 export const initialColleges: College[] = [
-  { id: 'col-1', name: 'College of Engineering', code: 'COE', head: 'Dr. James Wilson' },
-  { id: 'col-2', name: 'College of Science', code: 'COS', head: 'Dr. Sarah Chen' },
-  { id: 'col-3', name: 'College of Arts', code: 'COA', head: 'Prof. Michael Brown' },
-  { id: 'col-4', name: 'College of Business', code: 'COB', head: 'Dr. Emily Davis' },
+  { id: 'col-1', name: 'College of Engineering and Technology', code: 'CoET', head: 'Dr. Tesfaye Abera' },
+  { id: 'col-2', name: 'College of Natural and Computational Sciences', code: 'CNCS', head: 'Dr. Solomon Bekele' },
+  { id: 'col-3', name: 'College of Social Sciences and Humanities', code: 'CSSH', head: 'Prof. Mulugeta Desta' },
+  { id: 'col-4', name: 'College of Business and Economics', code: 'CBE', head: 'Dr. Almaz Girma' },
+  { id: 'col-5', name: 'College of Agricultural Sciences', code: 'CoAS', head: 'Dr. Kebede Hailu' },
+  { id: 'col-6', name: 'College of Medicine and Health Sciences', code: 'CMHS', head: 'Dr. Hana Mekonnen' },
 ];
 
 export const initialInstitutions: Institution[] = [
-  { id: 'inst-1', collegeId: 'col-1', name: 'Computer Science Department', code: 'CSD', head: 'Dr. Alan Turing', memberCount: 45 },
-  { id: 'inst-2', collegeId: 'col-1', name: 'Electrical Engineering', code: 'EE', head: 'Dr. Nikola Tesla', memberCount: 38 },
-  { id: 'inst-3', collegeId: 'col-1', name: 'Mechanical Engineering', code: 'ME', head: 'Dr. Henry Ford', memberCount: 52 },
-  { id: 'inst-4', collegeId: 'col-2', name: 'Physics Department', code: 'PHY', head: 'Dr. Albert Einstein', memberCount: 28 },
-  { id: 'inst-5', collegeId: 'col-2', name: 'Chemistry Department', code: 'CHEM', head: 'Dr. Marie Curie', memberCount: 32 },
-  { id: 'inst-6', collegeId: 'col-3', name: 'English Department', code: 'ENG', head: 'Prof. Jane Austen', memberCount: 22 },
-  { id: 'inst-7', collegeId: 'col-4', name: 'Finance Department', code: 'FIN', head: 'Dr. Warren Buffett', memberCount: 35 },
+  // College of Engineering and Technology (CoET)
+  { id: 'inst-1', collegeId: 'col-1', name: 'Department of Computer Science and Engineering', code: 'CSE', head: 'Dr. Daniel Yilma', memberCount: 52 },
+  { id: 'inst-2', collegeId: 'col-1', name: 'Department of Electrical and Computer Engineering', code: 'ECE', head: 'Dr. Ermias Tadesse', memberCount: 48 },
+  { id: 'inst-3', collegeId: 'col-1', name: 'Department of Civil Engineering', code: 'CIVIL', head: 'Dr. Girma Worku', memberCount: 55 },
+  { id: 'inst-4', collegeId: 'col-1', name: 'Department of Mechanical Engineering', code: 'MECH', head: 'Dr. Hailu Tefera', memberCount: 50 },
+  { id: 'inst-5', collegeId: 'col-1', name: 'Department of Water Resources and Irrigation Engineering', code: 'WRIE', head: 'Dr. Yohannes Gebre', memberCount: 45 },
+  
+  // College of Natural and Computational Sciences (CNCS)
+  { id: 'inst-6', collegeId: 'col-2', name: 'Department of Mathematics', code: 'MATH', head: 'Dr. Bekele Alemu', memberCount: 38 },
+  { id: 'inst-7', collegeId: 'col-2', name: 'Department of Physics', code: 'PHYS', head: 'Dr. Fasil Kebede', memberCount: 35 },
+  { id: 'inst-8', collegeId: 'col-2', name: 'Department of Chemistry', code: 'CHEM', head: 'Dr. Selamawit Haile', memberCount: 42 },
+  { id: 'inst-9', collegeId: 'col-2', name: 'Department of Biology', code: 'BIO', head: 'Dr. Meseret Negash', memberCount: 40 },
+  { id: 'inst-10', collegeId: 'col-2', name: 'Department of Statistics', code: 'STAT', head: 'Dr. Kidist Tadesse', memberCount: 32 },
+  
+  // College of Social Sciences and Humanities (CSSH)
+  { id: 'inst-11', collegeId: 'col-3', name: 'Department of English Language and Literature', code: 'ENG', head: 'Prof. Yared Tessema', memberCount: 35 },
+  { id: 'inst-12', collegeId: 'col-3', name: 'Department of History and Heritage Management', code: 'HIST', head: 'Prof. Tekle Seyoum', memberCount: 28 },
+  { id: 'inst-13', collegeId: 'col-3', name: 'Department of Geography and Environmental Studies', code: 'GEO', head: 'Dr. Wondwosen Mengistu', memberCount: 32 },
+  { id: 'inst-14', collegeId: 'col-3', name: 'Department of Psychology', code: 'PSY', head: 'Dr. Eleni Kassa', memberCount: 30 },
+  { id: 'inst-15', collegeId: 'col-3', name: 'Department of Sociology', code: 'SOC', head: 'Dr. Tsehay Legesse', memberCount: 28 },
+  
+  // College of Business and Economics (CBE)
+  { id: 'inst-16', collegeId: 'col-4', name: 'Department of Accounting and Finance', code: 'ACFN', head: 'Dr. Biruk Shiferaw', memberCount: 45 },
+  { id: 'inst-17', collegeId: 'col-4', name: 'Department of Management', code: 'MGMT', head: 'Dr. Fikirte Tamiru', memberCount: 42 },
+  { id: 'inst-18', collegeId: 'col-4', name: 'Department of Economics', code: 'ECON', head: 'Dr. Dawit Wolde', memberCount: 38 },
+  { id: 'inst-19', collegeId: 'col-4', name: 'Department of Marketing Management', code: 'MKTG', head: 'Dr. Rahel Fantahun', memberCount: 35 },
+  
+  // College of Agricultural Sciences (CoAS)
+  { id: 'inst-20', collegeId: 'col-5', name: 'Department of Plant Sciences', code: 'PLNT', head: 'Dr. Getachew Berhe', memberCount: 40 },
+  { id: 'inst-21', collegeId: 'col-5', name: 'Department of Animal and Range Sciences', code: 'ANRS', head: 'Dr. Chaltu Regassa', memberCount: 38 },
+  { id: 'inst-22', collegeId: 'col-5', name: 'Department of Rural Development and Agricultural Extension', code: 'RDAE', head: 'Dr. Lemlem Debebe', memberCount: 35 },
+  { id: 'inst-23', collegeId: 'col-5', name: 'Department of Food Science and Postharvest Technology', code: 'FSPT', head: 'Dr. Nardos Demissie', memberCount: 32 },
+  
+  // College of Medicine and Health Sciences (CMHS)
+  { id: 'inst-24', collegeId: 'col-6', name: 'Department of Medicine', code: 'MED', head: 'Dr. Samuel Endale', memberCount: 60 },
+  { id: 'inst-25', collegeId: 'col-6', name: 'Department of Nursing', code: 'NURS', head: 'Dr. Sara Melaku', memberCount: 55 },
+  { id: 'inst-26', collegeId: 'col-6', name: 'Department of Public Health', code: 'PUBH', head: 'Dr. Mekdes Nigussie', memberCount: 45 },
+  { id: 'inst-27', collegeId: 'col-6', name: 'Department of Pharmacy', code: 'PHAR', head: 'Dr. Tigist Admasu', memberCount: 40 },
 ];
 
-export const initialMembers: Member[] = [
-  { id: 'mem-1', institutionId: 'inst-1', collegeId: 'col-1', name: 'John Smith', employeeId: 'EMP001', email: 'john.smith@university.edu', phone: '555-0101', status: 'active', joinDate: '2020-01-15' },
-  { id: 'mem-2', institutionId: 'inst-1', collegeId: 'col-1', name: 'Jane Doe', employeeId: 'EMP002', email: 'jane.doe@university.edu', phone: '555-0102', status: 'active', joinDate: '2019-06-20' },
-  { id: 'mem-3', institutionId: 'inst-1', collegeId: 'col-1', name: 'Robert Johnson', employeeId: 'EMP003', email: 'robert.j@university.edu', phone: '555-0103', status: 'active', joinDate: '2021-03-10' },
-  { id: 'mem-4', institutionId: 'inst-2', collegeId: 'col-1', name: 'Emily White', employeeId: 'EMP004', email: 'emily.w@university.edu', phone: '555-0104', status: 'active', joinDate: '2018-09-05' },
-  { id: 'mem-5', institutionId: 'inst-2', collegeId: 'col-1', name: 'Michael Brown', employeeId: 'EMP005', email: 'michael.b@university.edu', phone: '555-0105', status: 'inactive', joinDate: '2017-02-28' },
-  { id: 'mem-6', institutionId: 'inst-4', collegeId: 'col-2', name: 'Sarah Davis', employeeId: 'EMP006', email: 'sarah.d@university.edu', phone: '555-0106', status: 'active', joinDate: '2020-08-12' },
-  { id: 'mem-7', institutionId: 'inst-7', collegeId: 'col-4', name: 'David Wilson', employeeId: 'EMP007', email: 'david.w@university.edu', phone: '555-0107', status: 'active', joinDate: '2019-11-30' },
-];
+// Generate members dynamically
+const generateMembers = (): Member[] => {
+  const members: Member[] = [];
+  let memberId = 1;
+  let employeeNum = 1000;
+  
+  initialInstitutions.forEach(inst => {
+    const memberCount = 50 + Math.floor(Math.random() * 10); // 50-60 members per dept
+    
+    for (let i = 0; i < memberCount; i++) {
+      const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+      const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+      const status: ('active' | 'inactive' | 'suspended')[] = ['active', 'active', 'active', 'active', 'inactive', 'suspended'];
+      const randomStatus = status[Math.floor(Math.random() * status.length)];
+      const joinYear = 2015 + Math.floor(Math.random() * 10);
+      const joinMonth = String(1 + Math.floor(Math.random() * 12)).padStart(2, '0');
+      const joinDay = String(1 + Math.floor(Math.random() * 28)).padStart(2, '0');
+      
+      members.push({
+        id: `mem-${memberId}`,
+        institutionId: inst.id,
+        collegeId: inst.collegeId,
+        name: `${firstName} ${lastName}`,
+        employeeId: `AMU${String(employeeNum).padStart(5, '0')}`,
+        email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@amu.edu.et`,
+        phone: `+251 ${9}${Math.floor(10000000 + Math.random() * 90000000)}`,
+        status: randomStatus,
+        joinDate: `${joinYear}-${joinMonth}-${joinDay}`,
+      });
+      
+      memberId++;
+      employeeNum++;
+    }
+  });
+  
+  return members;
+};
 
-export const initialSavings: Saving[] = [
-  { id: 'sav-1', memberId: 'mem-1', year: 2024, month: 1, amount: 5000, interest: 250, balance: 55250, createdAt: '2024-01-31' },
-  { id: 'sav-2', memberId: 'mem-1', year: 2024, month: 2, amount: 5000, interest: 263, balance: 60513, createdAt: '2024-02-29' },
-  { id: 'sav-3', memberId: 'mem-1', year: 2024, month: 3, amount: 5000, interest: 276, balance: 65789, createdAt: '2024-03-31' },
-  { id: 'sav-4', memberId: 'mem-2', year: 2024, month: 1, amount: 8000, interest: 400, balance: 88400, createdAt: '2024-01-31' },
-  { id: 'sav-5', memberId: 'mem-2', year: 2024, month: 2, amount: 8000, interest: 420, balance: 96820, createdAt: '2024-02-29' },
-  { id: 'sav-6', memberId: 'mem-3', year: 2024, month: 1, amount: 3000, interest: 150, balance: 33150, createdAt: '2024-01-31' },
-];
+// Generate savings dynamically based on members
+const generateSavings = (members: Member[]): Saving[] => {
+  const savings: Saving[] = [];
+  let savingId = 1;
+  
+  members.forEach(member => {
+    if (member.status !== 'active') return;
+    
+    // Random number of months they've been saving (12-48)
+    const monthsSaving = 12 + Math.floor(Math.random() * 36);
+    const monthlyAmount = (500 + Math.floor(Math.random() * 4500)); // 500-5000 ETB monthly
+    const interestRate = 0.005; // 0.5% monthly interest
+    let runningBalance = 0;
+    
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - monthsSaving);
+    
+    for (let i = 0; i < monthsSaving; i++) {
+      const date = new Date(startDate);
+      date.setMonth(date.getMonth() + i);
+      
+      const interest = Math.round(runningBalance * interestRate);
+      runningBalance += monthlyAmount + interest;
+      
+      // Only keep recent 6 months of detailed records
+      if (i >= monthsSaving - 6) {
+        savings.push({
+          id: `sav-${savingId}`,
+          memberId: member.id,
+          year: date.getFullYear(),
+          month: date.getMonth() + 1,
+          amount: monthlyAmount,
+          interest: interest,
+          balance: runningBalance,
+          createdAt: date.toISOString().split('T')[0],
+        });
+        savingId++;
+      }
+    }
+  });
+  
+  return savings;
+};
 
-export const initialLoans: Loan[] = [
-  { id: 'loan-1', memberId: 'mem-1', loanNumber: 'LN-2024-001', amount: 100000, interestRate: 12, tenure: 24, status: 'active', disbursedAt: '2024-01-15', dueDate: '2026-01-15', totalPayable: 124000, amountPaid: 31000 },
-  { id: 'loan-2', memberId: 'mem-2', loanNumber: 'LN-2024-002', amount: 50000, interestRate: 10, tenure: 12, status: 'active', disbursedAt: '2024-02-01', dueDate: '2025-02-01', totalPayable: 55000, amountPaid: 27500 },
-  { id: 'loan-3', memberId: 'mem-3', loanNumber: 'LN-2023-015', amount: 75000, interestRate: 11, tenure: 18, status: 'completed', disbursedAt: '2023-06-01', dueDate: '2024-12-01', totalPayable: 87375, amountPaid: 87375 },
-  { id: 'loan-4', memberId: 'mem-4', loanNumber: 'LN-2024-003', amount: 200000, interestRate: 12, tenure: 36, status: 'active', disbursedAt: '2024-03-01', dueDate: '2027-03-01', totalPayable: 272000, amountPaid: 45000 },
-  { id: 'loan-5', memberId: 'mem-5', loanNumber: 'LN-2023-008', amount: 60000, interestRate: 12, tenure: 12, status: 'overdue', disbursedAt: '2023-01-15', dueDate: '2024-01-15', totalPayable: 67200, amountPaid: 40000 },
-];
+// Generate loans dynamically based on members
+const generateLoans = (members: Member[]): Loan[] => {
+  const loans: Loan[] = [];
+  let loanId = 1;
+  
+  // Only 30% of members have loans
+  const membersWithLoans = members.filter(() => Math.random() < 0.3);
+  
+  membersWithLoans.forEach(member => {
+    const amount = (10000 + Math.floor(Math.random() * 190000)); // 10,000 - 200,000 ETB
+    const interestRate = 8 + Math.floor(Math.random() * 7); // 8-14%
+    const tenure = [6, 12, 18, 24, 36][Math.floor(Math.random() * 5)];
+    const statuses: ('active' | 'completed' | 'overdue' | 'defaulted')[] = ['active', 'active', 'active', 'completed', 'overdue'];
+    const status = statuses[Math.floor(Math.random() * statuses.length)];
+    
+    const disbursedDate = new Date();
+    disbursedDate.setMonth(disbursedDate.getMonth() - Math.floor(Math.random() * tenure));
+    
+    const dueDate = new Date(disbursedDate);
+    dueDate.setMonth(dueDate.getMonth() + tenure);
+    
+    const totalPayable = Math.round(amount * (1 + interestRate / 100));
+    const amountPaid = status === 'completed' ? totalPayable : Math.round(totalPayable * Math.random() * 0.7);
+    
+    loans.push({
+      id: `loan-${loanId}`,
+      memberId: member.id,
+      loanNumber: `LN-${disbursedDate.getFullYear()}-${String(loanId).padStart(4, '0')}`,
+      amount,
+      interestRate,
+      tenure,
+      status,
+      disbursedAt: disbursedDate.toISOString().split('T')[0],
+      dueDate: dueDate.toISOString().split('T')[0],
+      totalPayable,
+      amountPaid,
+    });
+    
+    loanId++;
+  });
+  
+  return loans;
+};
 
-export const initialRepayments: Repayment[] = [
-  { id: 'rep-1', loanId: 'loan-1', memberId: 'mem-1', amount: 10000, paidAt: '2024-02-15', method: 'salary_deduction', reference: 'SAL-2024-02-001' },
-  { id: 'rep-2', loanId: 'loan-1', memberId: 'mem-1', amount: 10500, paidAt: '2024-03-15', method: 'salary_deduction', reference: 'SAL-2024-03-001' },
-  { id: 'rep-3', loanId: 'loan-1', memberId: 'mem-1', amount: 10500, paidAt: '2024-04-15', method: 'salary_deduction', reference: 'SAL-2024-04-001' },
-  { id: 'rep-4', loanId: 'loan-2', memberId: 'mem-2', amount: 13750, paidAt: '2024-03-01', method: 'bank_transfer', reference: 'TRF-2024-03-002' },
-  { id: 'rep-5', loanId: 'loan-2', memberId: 'mem-2', amount: 13750, paidAt: '2024-04-01', method: 'bank_transfer', reference: 'TRF-2024-04-002' },
-];
+// Generate repayments based on loans
+const generateRepayments = (loans: Loan[]): Repayment[] => {
+  const repayments: Repayment[] = [];
+  let repaymentId = 1;
+  
+  loans.forEach(loan => {
+    if (loan.amountPaid <= 0) return;
+    
+    // Generate 1-6 repayments per loan
+    const numRepayments = 1 + Math.floor(Math.random() * 6);
+    let totalPaid = 0;
+    const paymentPerRepayment = Math.floor(loan.amountPaid / numRepayments);
+    
+    for (let i = 0; i < numRepayments; i++) {
+      if (totalPaid >= loan.amountPaid) break;
+      
+      const paidDate = new Date(loan.disbursedAt);
+      paidDate.setMonth(paidDate.getMonth() + i + 1);
+      
+      const methods: ('cash' | 'bank_transfer' | 'salary_deduction')[] = ['cash', 'bank_transfer', 'salary_deduction'];
+      const method = methods[Math.floor(Math.random() * methods.length)];
+      
+      const amount = i === numRepayments - 1 ? loan.amountPaid - totalPaid : paymentPerRepayment;
+      
+      repayments.push({
+        id: `rep-${repaymentId}`,
+        loanId: loan.id,
+        memberId: loan.memberId,
+        amount,
+        paidAt: paidDate.toISOString().split('T')[0],
+        method,
+        reference: `REF-${paidDate.getFullYear()}-${String(repaymentId).padStart(5, '0')}`,
+      });
+      
+      totalPaid += amount;
+      repaymentId++;
+    }
+  });
+  
+  return repayments;
+};
+
+// Generate data
+export const initialMembers = generateMembers();
+export const initialSavings = generateSavings(initialMembers);
+export const initialLoans = generateLoans(initialMembers);
+export const initialRepayments = generateRepayments(initialLoans);
 
 export const initialAuditLogs: AuditLog[] = [
-  { id: 'aud-1', userId: 'user-1', userName: 'Admin User', action: 'UPDATE', entityType: 'member', entityId: 'mem-1', field: 'phone', oldValue: '555-0100', newValue: '555-0101', timestamp: '2024-04-10T10:30:00Z' },
-  { id: 'aud-2', userId: 'user-2', userName: 'Officer John', action: 'CREATE', entityType: 'loan', entityId: 'loan-4', field: 'amount', oldValue: '', newValue: '200000', timestamp: '2024-03-01T09:15:00Z' },
+  { id: 'aud-1', userId: 'user-1', userName: 'Admin User', action: 'UPDATE', entityType: 'member', entityId: 'mem-1', field: 'phone', oldValue: '+251 912345678', newValue: '+251 987654321', timestamp: '2024-04-10T10:30:00Z' },
+  { id: 'aud-2', userId: 'user-2', userName: 'Officer Dawit', action: 'CREATE', entityType: 'loan', entityId: 'loan-4', field: 'amount', oldValue: '', newValue: '200000', timestamp: '2024-03-01T09:15:00Z' },
   { id: 'aud-3', userId: 'user-1', userName: 'Admin User', action: 'UPDATE', entityType: 'saving', entityId: 'sav-1', field: 'amount', oldValue: '4500', newValue: '5000', timestamp: '2024-02-28T14:45:00Z' },
 ];
 
 export const initialRecentActivity: RecentActivity[] = [
-  { id: 'act-1', type: 'repayment', description: 'Loan repayment of $10,500 by John Smith', user: 'System', timestamp: '2024-04-15T10:00:00Z' },
-  { id: 'act-2', type: 'saving', description: 'Monthly saving of $5,000 added for Jane Doe', user: 'Officer John', timestamp: '2024-04-14T15:30:00Z' },
-  { id: 'act-3', type: 'loan', description: 'New loan application approved for Emily White', user: 'Admin User', timestamp: '2024-04-12T11:20:00Z' },
-  { id: 'act-4', type: 'member', description: 'New member David Wilson registered', user: 'Admin User', timestamp: '2024-04-10T09:00:00Z' },
-  { id: 'act-5', type: 'edit', description: 'Profile updated for Michael Brown', user: 'Officer Jane', timestamp: '2024-04-08T16:45:00Z' },
+  { id: 'act-1', type: 'repayment', description: 'Loan repayment of ETB 15,000 by Abebe Kebede', user: 'System', timestamp: '2024-04-15T10:00:00Z' },
+  { id: 'act-2', type: 'saving', description: 'Monthly saving of ETB 3,000 added for Almaz Bekele', user: 'Officer Dawit', timestamp: '2024-04-14T15:30:00Z' },
+  { id: 'act-3', type: 'loan', description: 'New loan application approved for Daniel Hailu', user: 'Admin User', timestamp: '2024-04-12T11:20:00Z' },
+  { id: 'act-4', type: 'member', description: 'New member Eleni Tessema registered', user: 'Admin User', timestamp: '2024-04-10T09:00:00Z' },
+  { id: 'act-5', type: 'edit', description: 'Profile updated for Girma Alemu', user: 'Officer Sara', timestamp: '2024-04-08T16:45:00Z' },
 ];
