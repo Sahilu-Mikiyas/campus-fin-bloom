@@ -5,7 +5,7 @@ import { TopNavbar } from '@/components/layout/TopNavbar';
 import { SidebarProvider } from '@/components/ui/sidebar';
 
 export default function DashboardLayout() {
-  const { user, loading } = useAuth();
+  const { user, loading, isFinance } = useAuth();
 
   if (loading) {
     return (
@@ -17,6 +17,11 @@ export default function DashboardLayout() {
 
   if (!user) {
     return <Navigate to="/auth" replace />;
+  }
+
+  // Redirect finance users to their dedicated portal
+  if (isFinance) {
+    return <Navigate to="/finance" replace />;
   }
 
   return (

@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import DashboardLayout from "./layouts/DashboardLayout";
+import FinanceLayout from "./layouts/FinanceLayout";
 import Dashboard from "./pages/Dashboard";
 import CollegePage from "./pages/CollegePage";
 import InstitutionPage from "./pages/InstitutionPage";
@@ -16,6 +17,7 @@ import SavingsOverview from "./pages/SavingsOverview";
 import LoansOverview from "./pages/LoansOverview";
 import OverdueLoans from "./pages/OverdueLoans";
 import UserManagement from "./pages/UserManagement";
+import FinanceDashboard from "./pages/FinanceDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +42,10 @@ const App = () => (
               <Route path="loans" element={<LoansOverview />} />
               <Route path="overdue" element={<OverdueLoans />} />
               <Route path="users" element={<UserManagement />} />
+              <Route path="monthly-data" element={<FinanceDashboard />} />
+            </Route>
+            <Route path="/finance" element={<FinanceLayout />}>
+              <Route index element={<FinanceDashboard />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
