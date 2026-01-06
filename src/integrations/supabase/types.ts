@@ -14,6 +14,171 @@ export type Database = {
   }
   public: {
     Tables: {
+      change_comments: {
+        Row: {
+          author_id: string | null
+          change_log_id: string
+          content: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          author_id?: string | null
+          change_log_id: string
+          content: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          author_id?: string | null
+          change_log_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "change_comments_change_log_id_fkey"
+            columns: ["change_log_id"]
+            isOneToOne: false
+            referencedRelation: "change_logs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      change_logs: {
+        Row: {
+          changed_by: string | null
+          created_at: string
+          field_name: string
+          id: string
+          monthly_data_id: string
+          new_value: string | null
+          old_value: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string
+          field_name: string
+          id?: string
+          monthly_data_id: string
+          new_value?: string | null
+          old_value?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string
+          field_name?: string
+          id?: string
+          monthly_data_id?: string
+          new_value?: string | null
+          old_value?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "change_logs_monthly_data_id_fkey"
+            columns: ["monthly_data_id"]
+            isOneToOne: false
+            referencedRelation: "monthly_member_data"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      monthly_member_data: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          loan_balance: number
+          member_id: string
+          month: string
+          monthly_contribution: number
+          monthly_repayment: number
+          status: string
+          total_loans: number
+          total_savings: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          loan_balance?: number
+          member_id: string
+          month: string
+          monthly_contribution?: number
+          monthly_repayment?: number
+          status?: string
+          total_loans?: number
+          total_savings?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          loan_balance?: number
+          member_id?: string
+          month?: string
+          monthly_contribution?: number
+          monthly_repayment?: number
+          status?: string
+          total_loans?: number
+          total_savings?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          read: boolean
+          related_change_id: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          read?: boolean
+          related_change_id?: string | null
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean
+          related_change_id?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_related_change_id_fkey"
+            columns: ["related_change_id"]
+            isOneToOne: false
+            referencedRelation: "change_logs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -92,7 +257,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "officer" | "viewer"
+      app_role: "admin" | "officer" | "viewer" | "finance"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -220,7 +385,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "officer", "viewer"],
+      app_role: ["admin", "officer", "viewer", "finance"],
     },
   },
 } as const

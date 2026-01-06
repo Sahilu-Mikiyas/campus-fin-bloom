@@ -14,15 +14,16 @@ export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   
-  const { signIn, user, loading } = useAuth();
+  const { signIn, user, loading, isFinance } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
     if (!loading && user) {
-      navigate('/dashboard');
+      // Redirect finance users to their dedicated portal
+      navigate(isFinance ? '/finance' : '/dashboard');
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, isFinance]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +44,7 @@ export default function Auth() {
         title: 'Welcome!',
         description: 'You have successfully logged in.',
       });
-      navigate('/dashboard');
+      // Navigation will be handled by the useEffect
     }
 
     setIsLoading(false);

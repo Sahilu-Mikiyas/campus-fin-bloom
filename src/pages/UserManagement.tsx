@@ -38,7 +38,7 @@ interface UserWithRole {
   first_name: string | null;
   last_name: string | null;
   employee_id: string | null;
-  role: 'admin' | 'officer' | 'viewer';
+  role: 'admin' | 'officer' | 'viewer' | 'finance';
   created_at: string;
 }
 
@@ -59,14 +59,14 @@ export default function UserManagement() {
     first_name: '',
     last_name: '',
     employee_id: '',
-    role: 'viewer' as 'admin' | 'officer' | 'viewer',
+    role: 'viewer' as 'admin' | 'officer' | 'viewer' | 'finance',
   });
 
   const [editForm, setEditForm] = useState({
     first_name: '',
     last_name: '',
     employee_id: '',
-    role: 'viewer' as 'admin' | 'officer' | 'viewer',
+    role: 'viewer' as 'admin' | 'officer' | 'viewer' | 'finance',
   });
 
   const callAdminApi = async (action: string, payload: Record<string, unknown> = {}) => {
@@ -200,9 +200,10 @@ export default function UserManagement() {
     setShowDeleteModal(true);
   };
 
-  const roleColors: Record<string, 'default' | 'secondary' | 'outline'> = {
+  const roleColors: Record<string, 'default' | 'secondary' | 'outline' | 'destructive'> = {
     admin: 'default',
     officer: 'secondary',
+    finance: 'destructive',
     viewer: 'outline',
   };
 
@@ -391,7 +392,7 @@ export default function UserManagement() {
               <Label>Role *</Label>
               <Select
                 value={createForm.role}
-                onValueChange={(value: 'admin' | 'officer' | 'viewer') =>
+                onValueChange={(value: 'admin' | 'officer' | 'viewer' | 'finance') =>
                   setCreateForm({ ...createForm, role: value })
                 }
               >
@@ -401,6 +402,7 @@ export default function UserManagement() {
                 <SelectContent>
                   <SelectItem value="admin">Admin</SelectItem>
                   <SelectItem value="officer">Officer</SelectItem>
+                  <SelectItem value="finance">Finance</SelectItem>
                   <SelectItem value="viewer">Viewer</SelectItem>
                 </SelectContent>
               </Select>
@@ -455,7 +457,7 @@ export default function UserManagement() {
               <Label>Role</Label>
               <Select
                 value={editForm.role}
-                onValueChange={(value: 'admin' | 'officer' | 'viewer') =>
+                onValueChange={(value: 'admin' | 'officer' | 'viewer' | 'finance') =>
                   setEditForm({ ...editForm, role: value })
                 }
               >
@@ -465,6 +467,7 @@ export default function UserManagement() {
                 <SelectContent>
                   <SelectItem value="admin">Admin</SelectItem>
                   <SelectItem value="officer">Officer</SelectItem>
+                  <SelectItem value="finance">Finance</SelectItem>
                   <SelectItem value="viewer">Viewer</SelectItem>
                 </SelectContent>
               </Select>
