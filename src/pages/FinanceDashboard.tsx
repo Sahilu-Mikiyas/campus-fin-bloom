@@ -161,24 +161,28 @@ export default function FinanceDashboard() {
     }
   };
 
-  const getMemberInfo = (memberId: string) => {
-    const member = members.find(m => m.id === memberId);
-    if (!member) return { name: 'Unknown', college: 'Unknown', department: 'Unknown' };
+const getMemberInfo = (memberId: string) => {
+    const member = members.find(m => m.id === memberId || m.employeeId === memberId);
+    if (!member) return { name: 'Unknown', employeeId: memberId, college: 'Unknown', department: 'Unknown', collegeCode: '', deptCode: '', status: 'active' as const };
     
     const institution = institutions.find(i => i.id === member.institutionId);
     const college = colleges.find(c => c.id === member.collegeId);
     
     return {
       name: member.name,
+      employeeId: member.employeeId,
       college: college?.name || 'Unknown',
-      department: institution?.name || 'Unknown'
+      collegeCode: college?.code || '',
+      department: institution?.name || 'Unknown',
+      deptCode: institution?.code || '',
+      status: member.status
     };
   };
 
   const initializeMonthlyData = async () => {
     const monthDate = `${selectedMonth}-01`;
     const existingMemberIds = monthlyData.map(d => d.member_id);
-    const missingMembers = members.filter(m => !existingMemberIds.includes(m.id) && m.status === 'active');
+    const missingMembers = members.filter(m => !existingMemberIds.includes(m.employeeId) && m.status === 'active');
 
     if (missingMembers.length === 0) {
       toast.info('All active members already have data for this month');
@@ -186,17 +190,36 @@ export default function FinanceDashboard() {
     }
 
     try {
-      const newData = missingMembers.map(member => ({
-        member_id: member.id,
-        month: monthDate,
-        total_savings: 0,
-        total_loans: 0,
-        loan_balance: 0,
-        monthly_contribution: 0,
-        monthly_repayment: 0,
-        status: 'pending',
-        created_by: user?.id
-      }));
+      // Get existing savings and loans data from store for each member
+      const { savings, loans } = useStore.getState();
+      
+      const newData = missingMembers.map(member => {
+        // Calculate member's current savings
+        const memberSavings = savings.filter(s => s.memberId === member.id);
+        const latestSaving = memberSavings.reduce((latest, s) => {
+          if (!latest || new Date(s.createdAt) > new Date(latest.createdAt)) return s;
+          return latest;
+        }, null as typeof memberSavings[0] | null);
+        const totalSavings = latestSaving?.balance || 0;
+        
+        // Calculate member's loan info
+        const memberLoans = loans.filter(l => l.memberId === member.id);
+        const activeLoans = memberLoans.filter(l => l.status === 'active' || l.status === 'overdue');
+        const totalLoans = memberLoans.reduce((sum, l) => sum + l.amount, 0);
+        const loanBalance = activeLoans.reduce((sum, l) => sum + (l.totalPayable - l.amountPaid), 0);
+        
+        return {
+          member_id: member.employeeId, // Use employeeId as the reference
+          month: monthDate,
+          total_savings: totalSavings,
+          total_loans: totalLoans,
+          loan_balance: loanBalance,
+          monthly_contribution: latestSaving?.amount || 0,
+          monthly_repayment: 0,
+          status: 'pending',
+          created_by: user?.id
+        };
+      });
 
       const { error } = await supabase
         .from('monthly_member_data')
@@ -408,9 +431,11 @@ export default function FinanceDashboard() {
     const memberInfo = getMemberInfo(data.member_id);
     const searchLower = searchTerm.toLowerCase();
     return (
+      memberInfo.employeeId.toLowerCase().includes(searchLower) ||
       memberInfo.name.toLowerCase().includes(searchLower) ||
       memberInfo.college.toLowerCase().includes(searchLower) ||
-      memberInfo.department.toLowerCase().includes(searchLower)
+      memberInfo.department.toLowerCase().includes(searchLower) ||
+      data.member_id.toLowerCase().includes(searchLower)
     );
   });
 
@@ -555,11 +580,11 @@ export default function FinanceDashboard() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Member</TableHead>
-                        <TableHead>College</TableHead>
+                        <TableHead>Employee ID</TableHead>
+                        <TableHead>Name</TableHead>
                         <TableHead>Department</TableHead>
-                        <TableHead className="text-right">Total Savings</TableHead>
-                        <TableHead className="text-right">Total Loans</TableHead>
+                        <TableHead>College</TableHead>
+                        <TableHead className="text-right">Savings</TableHead>
                         <TableHead className="text-right">Loan Balance</TableHead>
                         <TableHead className="text-right">Monthly Contribution</TableHead>
                         <TableHead className="text-right">Monthly Repayment</TableHead>
@@ -574,10 +599,11 @@ export default function FinanceDashboard() {
 
                         return (
                           <TableRow key={data.id}>
+                            <TableCell className="font-mono text-sm">{memberInfo.employeeId}</TableCell>
                             <TableCell className="font-medium">{memberInfo.name}</TableCell>
-                            <TableCell>{memberInfo.college}</TableCell>
-                            <TableCell>{memberInfo.department}</TableCell>
-                            <TableCell className="text-right">
+                            <TableCell>{memberInfo.deptCode || memberInfo.department}</TableCell>
+                            <TableCell>{memberInfo.collegeCode || memberInfo.college}</TableCell>
+                            <TableCell className="text-right text-green-600 font-medium">
                               {isEditing ? (
                                 <Input
                                   type="number"
@@ -589,19 +615,7 @@ export default function FinanceDashboard() {
                                 `ETB ${data.total_savings.toLocaleString()}`
                               )}
                             </TableCell>
-                            <TableCell className="text-right">
-                              {isEditing ? (
-                                <Input
-                                  type="number"
-                                  value={editFormData.total_loans}
-                                  onChange={(e) => setEditFormData({ ...editFormData, total_loans: parseFloat(e.target.value) || 0 })}
-                                  className="w-28 text-right"
-                                />
-                              ) : (
-                                `ETB ${data.total_loans.toLocaleString()}`
-                              )}
-                            </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-right text-amber-600 font-medium">
                               {isEditing ? (
                                 <Input
                                   type="number"
