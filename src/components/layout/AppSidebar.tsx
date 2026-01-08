@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ChevronDown, ChevronRight, Building, Building2, Users, LayoutDashboard, UserCog, Menu } from 'lucide-react';
+import { ChevronDown, ChevronRight, Building, Building2, Users, LayoutDashboard, UserCog, Menu, DollarSign } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -120,6 +120,18 @@ export function AppSidebar() {
                 >
                   <UserCog className="h-4 w-4" />
                   {!collapsed && <span>Users</span>}
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => navigate('/dashboard/organization-finances')}
+                  className={cn(
+                    'w-full justify-start gap-3 transition-all duration-200',
+                    isActive('/dashboard/organization-finances') && 'bg-sidebar-primary text-sidebar-primary-foreground'
+                  )}
+                >
+                  <DollarSign className="h-4 w-4" />
+                  {!collapsed && <span>Finances</span>}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

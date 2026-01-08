@@ -15,6 +15,7 @@ import { Bell, CheckCircle, AlertCircle, Edit2, Save, X, MessageSquare, Search, 
 import { useStore } from '@/store/useStore';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { toast } from 'sonner';
+import { ChangeDetailModal } from '@/components/finance/ChangeDetailModal';
 
 interface MonthlyData {
   id: string;
@@ -48,6 +49,9 @@ interface ChangeLog {
   new_value: string | null;
   status: string;
   created_at: string;
+  changed_by?: string | null;
+  reviewed_by?: string | null;
+  reviewed_at?: string | null;
 }
 
 interface Comment {
@@ -55,6 +59,7 @@ interface Comment {
   change_log_id: string;
   content: string;
   created_at: string;
+  author_id?: string | null;
 }
 
 export default function FinanceDashboard() {
@@ -73,7 +78,9 @@ export default function FinanceDashboard() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedChangeLog, setSelectedChangeLog] = useState<ChangeLog | null>(null);
   const [showCommentModal, setShowCommentModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [monthlyDataMap, setMonthlyDataMap] = useState<Record<string, MonthlyData>>({});
 
   const isFinance = role === 'finance';
   const isAdmin = role === 'admin';
@@ -123,6 +130,13 @@ export default function FinanceDashboard() {
 
       if (monthlyError) throw monthlyError;
       setMonthlyData(monthlyDataResult || []);
+      
+      // Build monthly data map for member info lookup
+      const dataMap: Record<string, MonthlyData> = {};
+      (monthlyDataResult || []).forEach(item => {
+        dataMap[item.id] = item;
+      });
+      setMonthlyDataMap(dataMap);
 
       // Fetch notifications
       const { data: notificationsResult, error: notifError } = await supabase
@@ -699,15 +713,29 @@ const getMemberInfo = (memberId: string) => {
                 <div className="space-y-4">
                   {changeLogs.map((log) => {
                     const relatedComments = comments.filter(c => c.change_log_id === log.id);
+                    const relatedMonthlyData = monthlyDataMap[log.monthly_data_id];
+                    const memberInfo = relatedMonthlyData ? getMemberInfo(relatedMonthlyData.member_id) : null;
                     
                     return (
-                      <Card key={log.id} className="border">
+                      <Card 
+                        key={log.id} 
+                        className="border cursor-pointer hover:shadow-md transition-shadow"
+                        onClick={() => {
+                          setSelectedChangeLog(log);
+                          setShowDetailModal(true);
+                        }}
+                      >
                         <CardContent className="pt-4">
                           <div className="flex justify-between items-start">
                             <div className="space-y-1">
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-2 flex-wrap">
                                 <span className="font-medium capitalize">{log.field_name.replace('_', ' ')}</span>
                                 {getStatusBadge(log.status)}
+                                {memberInfo && (
+                                  <span className="text-sm text-muted-foreground">
+                                    • {memberInfo.name}
+                                  </span>
+                                )}
                               </div>
                               <p className="text-sm text-muted-foreground">
                                 Changed from <span className="font-mono bg-muted px-1">ETB {log.old_value}</span> to{' '}
@@ -718,7 +746,7 @@ const getMemberInfo = (memberId: string) => {
                               </p>
                             </div>
                             {isAdmin && log.status === 'pending' && (
-                              <div className="flex gap-2">
+                              <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                                 <Button size="sm" onClick={() => handleApprove(log)}>
                                   <CheckCircle className="h-4 w-4 mr-1" />
                                   Approve
@@ -738,9 +766,9 @@ const getMemberInfo = (memberId: string) => {
                             )}
                           </div>
                           {relatedComments.length > 0 && (
-                            <div className="mt-4 pt-4 border-t space-y-2">
-                              <h4 className="text-sm font-medium">Comments</h4>
-                              {relatedComments.map((comment) => (
+                            <div className="mt-4 pt-4 border-t space-y-2" onClick={(e) => e.stopPropagation()}>
+                              <h4 className="text-sm font-medium">Comments ({relatedComments.length})</h4>
+                              {relatedComments.slice(0, 2).map((comment) => (
                                 <div key={comment.id} className="bg-muted p-3 rounded-lg">
                                   <p className="text-sm">{comment.content}</p>
                                   <p className="text-xs text-muted-foreground mt-1">
@@ -748,6 +776,11 @@ const getMemberInfo = (memberId: string) => {
                                   </p>
                                 </div>
                               ))}
+                              {relatedComments.length > 2 && (
+                                <p className="text-xs text-muted-foreground">
+                                  +{relatedComments.length - 2} more comments
+                                </p>
+                              )}
                             </div>
                           )}
                         </CardContent>
@@ -837,6 +870,20 @@ const getMemberInfo = (memberId: string) => {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Change Detail Modal */}
+      <ChangeDetailModal
+        open={showDetailModal}
+        onClose={() => {
+          setShowDetailModal(false);
+          setSelectedChangeLog(null);
+        }}
+        changeLog={selectedChangeLog}
+        memberInfo={selectedChangeLog && monthlyDataMap[selectedChangeLog.monthly_data_id] 
+          ? getMemberInfo(monthlyDataMap[selectedChangeLog.monthly_data_id].member_id) 
+          : null}
+        comments={comments}
+      />
     </div>
   );
 }
