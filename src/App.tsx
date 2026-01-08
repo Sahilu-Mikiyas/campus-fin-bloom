@@ -18,6 +18,7 @@ import LoansOverview from "./pages/LoansOverview";
 import OverdueLoans from "./pages/OverdueLoans";
 import UserManagement from "./pages/UserManagement";
 import FinanceDashboard from "./pages/FinanceDashboard";
+import OrganizationFinances from "./pages/OrganizationFinances";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
               <Route path="overdue" element={<OverdueLoans />} />
               <Route path="users" element={<UserManagement />} />
               <Route path="monthly-data" element={<FinanceDashboard />} />
+              <Route path="organization-finances" element={<OrganizationFinances />} />
             </Route>
             <Route path="/finance" element={<FinanceLayout />}>
               <Route index element={<FinanceDashboard />} />
