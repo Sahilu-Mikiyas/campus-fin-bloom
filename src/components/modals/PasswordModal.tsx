@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Lock, AlertCircle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface PasswordModalProps {
   open: boolean;
@@ -38,14 +39,47 @@ export function PasswordModal({
     }
 
     setIsLoading(true);
-    // Simulate password verification (in real app, verify against server)
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // For demo purposes, accept any password
-    setIsLoading(false);
-    setPassword('');
     setError('');
-    onConfirm();
+
+    try {
+      // Server-side password verification via edge function
+      const { data: sessionData } = await supabase.auth.getSession();
+      
+      if (!sessionData.session) {
+        setError('You must be logged in to perform this action');
+        setIsLoading(false);
+        return;
+      }
+
+      const response = await supabase.functions.invoke('verify-password', {
+        body: { password },
+      });
+
+      if (response.error) {
+        console.error('Password verification error:', response.error);
+        setError('Verification failed. Please try again.');
+        setIsLoading(false);
+        return;
+      }
+
+      const result = response.data;
+
+      if (!result.valid) {
+        setError(result.error || 'Invalid password');
+        setIsLoading(false);
+        return;
+      }
+
+      // Password verified successfully
+      setPassword('');
+      setError('');
+      setIsLoading(false);
+      onConfirm();
+    } catch (err) {
+      console.error('Password verification error:', err);
+      setError('An error occurred. Please try again.');
+      setIsLoading(false);
+    }
   };
 
   const handleClose = () => {
