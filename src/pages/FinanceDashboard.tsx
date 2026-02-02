@@ -120,12 +120,17 @@ export default function FinanceDashboard() {
   const fetchData = async () => {
     setLoading(true);
     try {
+      // Calculate proper month end date
+      const monthStart = startOfMonth(new Date(`${selectedMonth}-01`));
+      const monthEnd = endOfMonth(monthStart);
+      const monthEndStr = format(monthEnd, 'yyyy-MM-dd');
+      
       // Fetch monthly data
       const { data: monthlyDataResult, error: monthlyError } = await supabase
         .from('monthly_member_data')
         .select('*')
         .gte('month', `${selectedMonth}-01`)
-        .lte('month', `${selectedMonth}-31`)
+        .lte('month', monthEndStr)
         .order('member_id');
 
       if (monthlyError) throw monthlyError;
@@ -237,7 +242,7 @@ const getMemberInfo = (memberId: string) => {
 
       const { error } = await supabase
         .from('monthly_member_data')
-        .insert(newData);
+        .upsert(newData, { onConflict: 'member_id,month' });
 
       if (error) throw error;
 
